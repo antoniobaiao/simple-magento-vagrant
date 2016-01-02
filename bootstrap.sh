@@ -128,7 +128,8 @@ cd ~
 git clone https://github.com/colinmollenhour/modman.git modman
 chmod +x ./modman
 sudo mv ./modman /usr/local/bin/
-source .bashrc
+#make modman available during terminal session
+export PATH=$PATH:/usr/local/bin/modman
 
 # Add My Module (AntonioBaiao/Productlist)
 # --------------------
@@ -137,4 +138,6 @@ modman init
 cd .modman
 git clone https://github.com/antoniobaiao/magento_module_productlist_example_modeman.git
 cd /vagrant/httpdocs
-modman deploy-all
+#need to be forced to prevent errors when replace existing files
+modman deploy-all --force
+

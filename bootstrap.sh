@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-
 SAMPLE_DATA=$1
-MAGE_VERSION="1.9.1.0"
+MAGE_VERSION="1.9.2.2"
 DATA_VERSION="1.9.0.0"
+
 
 # Update Apt
 # --------------------
@@ -21,6 +21,7 @@ php5enmod mcrypt
 # --------------------
 rm -rf /var/www/html
 mkdir /vagrant/httpdocs
+mv "$SAMPLE" /vagrant/httpdocs/"$SAMPLE"
 ln -fs /vagrant/httpdocs /var/www/html
 
 # Replace contents of default Apache vhost
@@ -67,15 +68,15 @@ mysql -u root -e "FLUSH PRIVILEGES"
 # http://www.magentocommerce.com/wiki/1_-_installation_and_configuration/installing_magento_via_shell_ssh
 
 # Download and extract
-if [[ ! -f "/vagrant/httpdocs/index.php" ]]; then
-  cd /vagrant/httpdocs
-  wget http://www.magentocommerce.com/downloads/assets/${MAGE_VERSION}/magento-${MAGE_VERSION}.tar.gz
-  tar -zxvf magento-${MAGE_VERSION}.tar.gz
-  mv magento/* magento/.htaccess .
-  chmod -R o+w media var
-  chmod o+w app/etc
-  # Clean up downloaded file and extracted dir
-  rm -rf magento*
+if [[ ! -f "/vagrant/httpdocs/index.php" ]]; then	
+		cd /vagrant/httpdocs
+		wget -O magento-${MAGE_VERSION}.tar.gz "https://www.dropbox.com/s/s5hb6lx4d5zacz5/magento-${MAGE_VERSION}.tar.gz?dl=1"
+		tar -zxvf magento-${MAGE_VERSION}.tar.gz
+		mv magento/* magento/.htaccess .
+		chmod -R o+w media var
+		chmod o+w app/etc
+		# Clean up downloaded file and extracted dir
+		rm -rf magento*
 fi
 
 
@@ -116,3 +117,25 @@ cd /vagrant/httpdocs
 wget https://raw.github.com/netz98/n98-magerun/master/n98-magerun.phar
 chmod +x ./n98-magerun.phar
 sudo mv ./n98-magerun.phar /usr/local/bin/
+
+# Install git
+# --------------------
+sudo apt-get install git -y
+
+# Install modman
+# --------------------
+cd ~
+git clone https://github.com/colinmollenhour/modman.git modman
+chmod +x ./modman
+sudo mv ./modman /usr/local/bin/
+alias modman="/usr/local/bin/modman/modman"
+source ~/.profile
+
+# Add My Module (AntonioBaiao/Productlist)
+# --------------------
+cd /vagrant/httpdocs
+modman init
+cd .modman
+git clone https://github.com/antoniobaiao/magento_module_productlist_example_modeman.git
+cd /vagrant/httpdocs
+modman deploy-all

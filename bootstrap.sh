@@ -128,8 +128,7 @@ cd ~
 git clone https://github.com/colinmollenhour/modman.git modman
 chmod +x ./modman
 sudo mv ./modman /usr/local/bin/
-alias modman="/usr/local/bin/modman/modman"
-source ~/.profile
+source .bashrc
 
 # Add My Module (AntonioBaiao/Productlist)
 # --------------------
